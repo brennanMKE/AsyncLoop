@@ -1,4 +1,5 @@
 public typealias DoneClosure = () -> Void
+public typealias AllDoneClosure = () -> Void
 
 /// Limit of concurrent work items the async loop will run
 public enum AsyncLoopLimit {
@@ -15,25 +16,19 @@ public struct AsyncLoopOptions {
     }
 }
 
-public struct AsyncWorkItem<WorkElement> {
-    let worker: (WorkElement) -> Void
-    let completionHandler: () -> Void
+public struct AsyncWorkItem<Element> {
+    typealias WorkItem = (Element) -> Void
+    let execute: WorkItem
+    let done: DoneClosure
+
+    init(execute: @escaping WorkItem, done: @escaping DoneClosure) {
+        self.execute = execute
+        self.done = done
+    }
 }
 
 public extension Sequence {
-    func asyncLoop<T: Sequence.Element>(options: AsyncLoopOptions? = nil, workItem: AsyncWorkItem<T>) -> DoneClosure {
-        fatalError()
-    }
-}
-
-public extension Collection {
-    func asyncLoop<T: Collection.Element>(options: AsyncLoopOptions? = nil, workItem: AsyncWorkItem<T>) -> DoneClosure {
-        fatalError()
-    }
-}
-
-public extension Array {
-    func asyncLoop<T: Array.Element>(options: AsyncLoopOptions? = nil, workItem: AsyncWorkItem<T>) -> DoneClosure {
+    func asyncLoop(options: AsyncLoopOptions? = nil, workItem: AsyncWorkItem<Self.Element>) -> AllDoneClosure {
         fatalError()
     }
 }
